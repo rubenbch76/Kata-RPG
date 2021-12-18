@@ -28,78 +28,113 @@ class CharacterTest extends TestCase {
 		//Given
 		$heman = new Character();
 		$skeletor = new Character();
-		$heman = $heman->setInitialHealth(1000);
-		$heman = $heman->setDamage(200);
-		$skeletor = $skeletor->setInitialHealth(1000);
-		$skeletor = $skeletor->setDamage(200);
+		$heman->setDamage(200);
+		$skeletor->setHealth(1000);
 		//When
 		$heman->deal_damage($skeletor);
 		//Then
-		$this->assertEquals($skeletor->getInitialHealth() - $heman->getDamage(), $skeletor->getHealth());
+		$this->assertEquals(1000 - $heman->getDamage(), $skeletor->getHealth());
 	}
 
-/*	public function test_deal_damage_health_equal_zero()
+	public function test_deal_damage_when_damage_exceeds_0_health()
 	{
 		//Given
-	
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setDamage(700);
+		$skeletor->setHealth(600);
 		//When
-		
+		$heman->deal_damage($skeletor);
 		//Then
-		
+		$this->assertEquals(0, $skeletor->getHealth());
+		$this->assertEquals(false, $skeletor->getAlive());
 
 	}
 
-	public function test_heal()
+	public function test_character_heal_other_character()
 	{
 		//Given
-		
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setHeal(200);
+		$skeletor->setHealth(500);
 		//When
-		
+		$heman->heal($skeletor);
 		//Then
-	
+		$this->assertEquals(500, $skeletor->getHealth());
 	}
 
-	public function test_heal_dead_character()
+	public function test_dead_character_cannot_be_heal()
 	{
 		//Given
-	
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setHeal(200);
+		$skeletor->setHealth(0);
 		//When
-		
+		$heman->heal($skeletor);
 		//Then
-	
+		$this->assertEquals(0, $skeletor->getHealth());
 	}
 
-	public function test_deal_no_damage_itself()
+	public function test_heal_health_cannot_rise_1000()
 	{
 		//Given
-	
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setHeal(200);
+		$skeletor->setHealth(900);
 		//When
-	
+		$heman->heal($skeletor);
 		//Then
-	
+		$this->assertEquals(900, $skeletor->getHealth());
 	}
 
-	public function test_only_heal_itself()
+	public function test_character_cannot_deal_damage_itself()
 	{
 		//Given
-		
+		$heman = new Character();
+		$heman->setHeal(1000);
+		$heman->setDamage(500);
 		//When
-	
+		$heman->deal_damage($heman);
 		//Then
-	
+		$this->assertEquals(1000, $heman->getHealth());
 	}
 
-	public function test_deal_damage_target_five_more_attacker()
+	public function test_deal_damage_target_5_levels_up_than_attacker()
 	{
 		//Given
-		
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setDamage(200);
+		$heman->setLevel(1);
+		$skeletor->setHealth(1000);
+		$skeletor->setLevel(7);
 		//When
-	
+		$heman->deal_damage($skeletor);
 		//Then
+		$this->assertEquals(900, $skeletor->getHealth());
 	
 	}
 
-	public function test_deal_damage_attacker_five_more_target()
+	public function test_deal_damage_target_5_levels_down_than_attacker()
+	{
+		//Given
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setDamage(200);
+		$heman->setLevel(7);
+		$skeletor->setHealth(1000);
+		$skeletor->setLevel(1);
+		//When
+		$heman->deal_damage($skeletor);
+		//Then
+		$this->assertEquals(700, $skeletor->getHealth());
+	
+	}
+
+/*	public function test_deal_damage_attacker_five_more_target()
 	{
 		//Given
 		

@@ -6,25 +6,28 @@ class Character {
 
     // Properties
 
-    private $initialHealth;
     private $health;
     private $level;
     private $alive;
     private $damage;
+    private $heal;
+    
     
 
     // Constructor
 
     public function __construct(){
-        $this->initialHealth = 1000;
+
         $this->health = 1000;
         $this->level = 1;
         $this->alive = true;
         $this->damage = 200;
+        $this->heal = 200;
         
     }
 
     // Getters and Setters
+
 
     public function getHealth()
     {
@@ -33,6 +36,16 @@ class Character {
 
     public function setHealth($health)
     {
+        if($health > 1000){
+            $this->health = 1000;
+            return;
+        }
+
+        if($health <= 0){
+            $this->killme(); 
+            return;          
+        }
+
         $this->health = $health;
 
         return $this;
@@ -104,26 +117,49 @@ class Character {
         return $this;   
     }
 
-    public function getInitialHealth()
-    {
-        return $this->initialHealth;
-    }
-
-    public function setInitialHealth($initialHealth)
-    {
-        $this->initialHealth = $initialHealth;
-
-        return $this;
-    }
-
 
     // Methods
 
     public function deal_damage ($character){
 
-        $character->health = $character->health - $this->damage;
+        if($character === $this) return;
+
+        $this->checkLevelBeforeAttack($character);
+
+        $character->setHealth($character->health - $this->damage);
     }
 
- 
+    public function heal ($character){
+
+        if($character != $this) return;
+
+        if($character->health == 0) return;
+
+        $character->setHealth($character->health + $this->heal);
+    }
+
+    public function killme(){
+        $this->health = 0;
+        $this->alive = false;
+    }
+
+    public function checkLevelBeforeAttack($character){
+        if($this->level - $character->level >= 5){
+            $this->setDamage50PercentUp();
+        }
+        if($this->level - $character->level <= -5){
+            $this->setDamage50PercentDown();
+        }
+    }
+
+    public function setDamage50PercentUp(){
+        $this->setDamage($this->getDamage() * 1.5);
+    }
+
+    public function setDamage50PercentDown(){
+        $this->setDamage($this->getDamage() * 0.5);
+    }
+
+    
 }
 ?>
