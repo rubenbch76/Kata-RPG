@@ -134,17 +134,24 @@ class CharacterTest extends TestCase {
 	
 	}
 
-/*	public function test_deal_damage_attacker_five_more_target()
+	public function test_characters_have_attack_max_range()
 	{
 		//Given
-		
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setDamage(200);
+		$heman->setRangeClass("Ranged");
+		$heman->setPosition(0);
+		$skeletor->setHealth(1000);
+		$skeletor->setPosition(18);
 		//When
-	
+		$heman->deal_damage($skeletor);
 		//Then
+		$this->assertEquals(1000 - $heman->getDamage(), $skeletor->getHealth());
 		
 	}
 
-	public function test_attack_max_range()
+/*	public function test_attack_max_range()
 	{
 		//Given
 		

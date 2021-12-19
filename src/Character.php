@@ -11,7 +11,9 @@ class Character {
     private $alive;
     private $damage;
     private $heal;
-    
+    private $position;
+    private $rangeClass;
+    private $rangeMax;
     
 
     // Constructor
@@ -23,11 +25,76 @@ class Character {
         $this->alive = true;
         $this->damage = 200;
         $this->heal = 200;
+        $this->position = 0;
+        $this->rangeClass = "Melee";
+        $this->rangeMax = 2;
         
     }
 
-    // Getters and Setters
 
+    // Methods
+
+    public function deal_damage ($character){
+
+        if(($character === $this) || ($this->outOfRangeBeforeAttack($character))) return;
+
+        $this->checkLevelBeforeAttack($character);
+
+        $character->setHealth($character->health - $this->damage);
+    }
+
+    public function heal ($character){
+
+        if($character != $this) return;
+
+        if($character->health == 0) return;
+
+        $character->setHealth($character->health + $this->heal);
+    }
+
+    public function killme(){
+        $this->health = 0;
+        $this->alive = false;
+    }
+
+    public function checkLevelBeforeAttack($character){
+        if($this->level - $character->level >= 5){
+            $this->setDamage50PercentUp();
+        }
+        if($this->level - $character->level <= -5){
+            $this->setDamage50PercentDown();
+        }
+    }
+
+    public function setDamage50PercentUp(){
+        $this->setDamage($this->getDamage() * 1.5);
+    }
+
+    public function setDamage50PercentDown(){
+        $this->setDamage($this->getDamage() * 0.5);
+    }
+
+    public function getDistanceBetween($character){
+
+        $distanceBetween = abs($this->position - $character->position);
+
+        return $distanceBetween;
+
+    }
+
+    public function outOfRangeBeforeAttack($character){
+
+        $distanceBetween = $this->getDistanceBetween($character);
+
+        if($distanceBetween > $this->getRangeMax()){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    // Getters and Setters
 
     public function getHealth()
     {
@@ -117,49 +184,37 @@ class Character {
         return $this;   
     }
 
-
-    // Methods
-
-    public function deal_damage ($character){
-
-        if($character === $this) return;
-
-        $this->checkLevelBeforeAttack($character);
-
-        $character->setHealth($character->health - $this->damage);
+    public function getRangeClass()
+    {
+        return $this->rangeClass;
     }
 
-    public function heal ($character){
-
-        if($character != $this) return;
-
-        if($character->health == 0) return;
-
-        $character->setHealth($character->health + $this->heal);
-    }
-
-    public function killme(){
-        $this->health = 0;
-        $this->alive = false;
-    }
-
-    public function checkLevelBeforeAttack($character){
-        if($this->level - $character->level >= 5){
-            $this->setDamage50PercentUp();
+    public function setRangeClass($rangeClass)
+    {
+        if($rangeClass == "Melee"){
+            $this->rangeClass = $rangeClass;
+            $this->setRangeMax(2);
         }
-        if($this->level - $character->level <= -5){
-            $this->setDamage50PercentDown();
+
+        if($rangeClass == "Ranged"){
+            $this->rangeClass = $rangeClass;
+            $this->setRangeMax(20);
         }
+        
+        return $this;
     }
 
-    public function setDamage50PercentUp(){
-        $this->setDamage($this->getDamage() * 1.5);
+    public function getRangeMax()
+    {
+        return $this->rangeMax;
     }
 
-    public function setDamage50PercentDown(){
-        $this->setDamage($this->getDamage() * 0.5);
+    public function setRangeMax($rangeMax)
+    {
+        $this->rangeMax = $rangeMax;
+
+        return $this;
     }
 
-    
 }
 ?>
