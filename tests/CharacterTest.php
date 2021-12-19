@@ -151,35 +151,68 @@ class CharacterTest extends TestCase {
 		
 	}
 
-/*	public function test_attack_max_range()
+	public function test_new_character_belong_no_Faction()
 	{
 		//Given
-		
-		//When
-		
+		$heman = new Character();
+		//When	
 		//Then
-		
+		$this->assertEquals("", $heman->getFaction());
 	}
-
-	public function test_movement()
+	public function test_character_may_belong_one_or_more_Factions()
 	{
 		//Given
-			
+		$heman = new Character();
 		//When
-	
+		$heman->joinFaction("Blues");
+		$heman->joinFaction("Reds");
+		$heman->joinFaction("Greens");
 		//Then
-		
+		$this->assertEquals("BluesRedsGreens", $heman->getFaction());
 	}
 
-	public function test_attack_range_to_deal(){
+	public function test_character_may_join_or_leave_one_or_more_Factions()
+	{
 		//Given
-	
+		$heman = new Character();
 		//When
-	
+		$heman->joinFaction("Blues");
+		$heman->joinFaction("Reds");
+		$heman->joinFaction("Greens");
+		$heman->leaveFaction("Reds");
+		$heman->leaveFaction("Blues");
 		//Then
-	
-	} */
-	
+		$this->assertEquals("Greens", $heman->getFaction());
+	}
+
+	public function test_characters_same_faction_are_allies()
+	{
+		//Given
+		$heman = new Character();
+		$skeletor = new Character();
+		//When
+		$heman->joinFaction("Blues");
+		$heman->joinFaction("Reds");
+		$skeletor->joinFaction("Blues");
+		$skeletor->joinFaction("Greens");
+		//Then
+		$this->assertEquals(true, $heman->isAllie($skeletor));
+	}
+
+	public function test_character_cannot_deal_damage_other_when_are_allies()
+	{
+		//Given
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setDamage(200);
+		$skeletor->setHealth(1000);
+		$heman->joinFaction("Reds");
+ 		$skeletor->joinFaction("Reds");
+		//When
+		$heman->deal_damage($skeletor);
+		//Then
+		$this->assertEquals(1000, $skeletor->getHealth());
+	}
 }
 
 

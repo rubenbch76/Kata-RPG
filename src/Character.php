@@ -14,6 +14,7 @@ class Character {
     private $position;
     private $rangeClass;
     private $rangeMax;
+    private $faction;
     
 
     // Constructor
@@ -28,6 +29,7 @@ class Character {
         $this->position = 0;
         $this->rangeClass = "Melee";
         $this->rangeMax = 2;
+        $this->faction = array();
         
     }
 
@@ -36,7 +38,7 @@ class Character {
 
     public function deal_damage ($character){
 
-        if(($character === $this) || ($this->outOfRangeBeforeAttack($character))) return;
+        if(($character === $this) || ($this->outOfRangeBeforeAttack($character) || ($this->isAllie($character)))) return;
 
         $this->checkLevelBeforeAttack($character);
 
@@ -92,6 +94,30 @@ class Character {
 
         return false;
     }
+
+    public function joinFaction($faction)
+    {
+        array_push($this->faction, $faction);
+
+        return $this;
+    }
+
+    public function leaveFaction($faction){
+
+        $this->faction = array_diff($this->faction, array($faction));
+
+    }
+
+    public function isAllie($character){
+
+        if(($character->faction == []) || ($this->faction == [])) return false;
+
+        if(array_intersect($this->faction, $character->faction)) return true;
+
+        return false;
+    }
+
+
 
 
     // Getters and Setters
@@ -215,6 +241,21 @@ class Character {
 
         return $this;
     }
+
+
+    public function getFaction()
+    {
+        $factionList="";
+        
+        foreach($this->faction as $factionName){
+
+            $factionList = $factionList . $factionName;
+        }
+
+        return $factionList;
+    }
+
+
 
 }
 ?>
