@@ -213,6 +213,22 @@ class CharacterTest extends TestCase {
 		//Then
 		$this->assertEquals(1000, $skeletor->getHealth());
 	}
+
+	public function test_allies_can_heal_other_allies()
+	{
+		//Given
+		$heman = new Character();
+		$skeletor = new Character();
+		$heman->setDamage(200);
+		$heman->setHealth(600);
+		$skeletor->setHealth(600);
+		$heman->joinFaction("Reds");
+ 		$skeletor->joinFaction("Reds"); 
+		//When
+		$heman->heal($skeletor);
+		//Then
+		$this->assertEquals(800, $skeletor->getHealth());
+	}
 }
 
 

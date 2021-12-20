@@ -47,11 +47,13 @@ class Character {
 
     public function heal ($character){
 
-        if($character != $this) return;
-
         if($character->health == 0) return;
 
-        $character->setHealth($character->health + $this->heal);
+        if($this->isAllie($character)){
+
+            $character->setHealth($character->health + $this->heal);
+
+        }    
     }
 
     public function killme(){
@@ -81,7 +83,6 @@ class Character {
         $distanceBetween = abs($this->position - $character->position);
 
         return $distanceBetween;
-
     }
 
     public function outOfRangeBeforeAttack($character){
