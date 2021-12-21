@@ -4,7 +4,7 @@ namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use App\Character;
-use App\Faction;
+use App\Thing;
 
 class CharacterTest extends TestCase {
 
@@ -229,6 +229,62 @@ class CharacterTest extends TestCase {
 		//Then
 		$this->assertEquals(800, $skeletor->getHealth());
 	}
-}
+
+	public function test_characters_can_damage_things()
+	{
+		//Given
+		$heman = new Character();
+		$mesa = new Thing();
+		$heman->setDamage(200);
+		$mesa->setHealth(900);
+		//When
+		$heman->deal_damage($mesa);
+		//Then
+		$this->assertEquals(700, $mesa->getHealth());
+		$this->assertEquals(true, $mesa->getIAmThing());
+	}
+
+	public function test_things_cannot_be_healed()
+	{
+		//Given
+		$heman = new Character();
+		$mesa = new Thing();
+		$heman->setHeal(200);
+		$mesa->setHealth(900);
+		//When
+		$heman->heal($mesa);
+		//Then
+		$this->assertEquals(900, $mesa->getHealth());	
+		$this->assertEquals(true, $mesa->getIAmThing());	
+	}
+
+ 	public function test_things_cannot_deal_damage()
+	{
+		//Given
+		$heman = new Character();
+		$mesa = new Thing();
+		$heman->setHealth(800);
+		$mesa->setDamage(200);
+		//When
+		$mesa->deal_damage($heman);
+		//Then
+		$this->assertEquals(800, $heman->getHealth());
+		$this->assertEquals(true, $mesa->getIAmThing());		
+	}
+
+	public function test_things_0_health_are_destroyed(){
+		//Given
+		$heman = new Character();
+		$mesa = new Thing();
+		$heman->setDamage(950);
+		$mesa->setHealth(900);
+		//When
+		$heman->deal_damage($mesa);
+		//Then
+		$this->assertEquals(0, $mesa->getHealth());
+		$this->assertEquals(true, $mesa->getDestroyed());
+
+	}
+} 
 
 

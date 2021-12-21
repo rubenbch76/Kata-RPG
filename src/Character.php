@@ -15,8 +15,8 @@ class Character {
     private $rangeClass;
     private $rangeMax;
     private $faction;
+    private $iAmThing;
     
-
     // Constructor
 
     public function __construct(){
@@ -30,35 +30,50 @@ class Character {
         $this->rangeClass = "Melee";
         $this->rangeMax = 2;
         $this->faction = array();
-        
+        $this->iAmThing = false;        
     }
-
 
     // Methods
 
     public function deal_damage ($character){
 
-        if(($character === $this) || ($this->outOfRangeBeforeAttack($character) || ($this->isAllie($character)))) return;
+        if($this->can_I_attack($character)){
 
-        $this->checkLevelBeforeAttack($character);
+            $this->checkLevelBeforeAttack($character);
 
-        $character->setHealth($character->health - $this->damage);
+            $character->setHealth($character->getHealth() - $this->getDamage());
+        } 
+
+       return;
     }
 
-    public function heal ($character){
+    public function can_I_attack ($character){
 
-        if($character->health == 0) return;
+        if(($character === $this) || 
+            ($this->outOfRangeBeforeAttack($character)) || 
+            ($this->isAllie($character)) ||
+            ($this->am_I_a_thing())) 
+            return false;
 
-        if($this->isAllie($character)){
-
-            $character->setHealth($character->health + $this->heal);
-
-        }    
+        return true;
     }
 
-    public function killme(){
-        $this->health = 0;
-        $this->alive = false;
+    public function outOfRangeBeforeAttack($character){
+
+        $distanceBetween = $this->getDistanceBetween($character);
+
+        if($distanceBetween > $this->getRangeMax()){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getDistanceBetween($character){
+
+        $distanceBetween = abs($this->position - $character->position);
+
+        return $distanceBetween;
     }
 
     public function checkLevelBeforeAttack($character){
@@ -78,22 +93,36 @@ class Character {
         $this->setDamage($this->getDamage() * 0.5);
     }
 
-    public function getDistanceBetween($character){
+    
+    public function heal ($character){
 
-        $distanceBetween = abs($this->position - $character->position);
+        if($character->health == 0) return;
 
-        return $distanceBetween;
+        if($this->isAllie($character)){
+
+            $character->setHealth($character->health + $this->heal);
+
+        }    
     }
 
-    public function outOfRangeBeforeAttack($character){
+    public function isAllie($character){
 
-        $distanceBetween = $this->getDistanceBetween($character);
+        if(($character->faction == []) || ($this->faction == [])) return false;
 
-        if($distanceBetween > $this->getRangeMax()){
-            return true;
-        }
+        if(array_intersect($this->faction, $character->faction)) return true;
 
         return false;
+    }
+
+    public function am_I_a_thing(){
+        
+        if($this->iAmThing) return true;
+        return false;
+    }
+
+    public function killme(){
+        $this->health = 0;
+        $this->alive = false;
     }
 
     public function joinFaction($faction)
@@ -109,18 +138,6 @@ class Character {
 
     }
 
-    public function isAllie($character){
-
-        if(($character->faction == []) || ($this->faction == [])) return false;
-
-        if(array_intersect($this->faction, $character->faction)) return true;
-
-        return false;
-    }
-
-
-
-
     // Getters and Setters
 
     public function getHealth()
@@ -129,7 +146,7 @@ class Character {
     }
 
     public function setHealth($health)
-    {
+    {        
         if($health > 1000){
             $this->health = 1000;
             return;
@@ -257,6 +274,17 @@ class Character {
     }
 
 
+    public function getIAmThing()
+    {
+        return $this->iAmThing;
+    }
 
+
+    public function setIAmThing($iAmThing)
+    {
+        $this->iAmThing = $iAmThing;
+
+        return $this;
+    }
 }
 ?>
