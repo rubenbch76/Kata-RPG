@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Thing;
+
 class Character {
 
     // Properties
@@ -15,7 +17,6 @@ class Character {
     private $rangeClass;
     private $rangeMax;
     private $faction;
-    private $iAmThing;
     
     // Constructor
 
@@ -29,8 +30,7 @@ class Character {
         $this->position = 0;
         $this->rangeClass = "Melee";
         $this->rangeMax = 2;
-        $this->faction = array();
-        $this->iAmThing = false;        
+        $this->faction = array();      
     }
 
     // Methods
@@ -71,12 +71,15 @@ class Character {
 
     public function getDistanceBetween($character){
 
-        $distanceBetween = abs($this->position - $character->position);
+        $distanceBetween = abs($this->position - $character->getPosition());
 
         return $distanceBetween;
     }
 
     public function checkLevelBeforeAttack($character){
+
+        if($character->am_I_a_thing()) return;
+
         if($this->level - $character->level >= 5){
             $this->setDamage50PercentUp();
         }
@@ -96,7 +99,7 @@ class Character {
     
     public function heal ($character){
 
-        if($character->health == 0) return;
+        if($character->getHealth() == 0) return;
 
         if($this->isAllie($character)){
 
@@ -107,7 +110,7 @@ class Character {
 
     public function isAllie($character){
 
-        if(($character->faction == []) || ($this->faction == [])) return false;
+        if(($character->getFaction() == []) || ($this->faction == [])) return false;
 
         if(array_intersect($this->faction, $character->faction)) return true;
 
@@ -116,7 +119,7 @@ class Character {
 
     public function am_I_a_thing(){
         
-        if($this->iAmThing) return true;
+        if(get_class($this) === "App\Thing") return true;
         return false;
     }
 
@@ -128,8 +131,6 @@ class Character {
     public function joinFaction($faction)
     {
         array_push($this->faction, $faction);
-
-        return $this;
     }
 
     public function leaveFaction($faction){
@@ -260,7 +261,6 @@ class Character {
         return $this;
     }
 
-
     public function getFaction()
     {
         $factionList="";
@@ -271,20 +271,6 @@ class Character {
         }
 
         return $factionList;
-    }
-
-
-    public function getIAmThing()
-    {
-        return $this->iAmThing;
-    }
-
-
-    public function setIAmThing($iAmThing)
-    {
-        $this->iAmThing = $iAmThing;
-
-        return $this;
     }
 }
 ?>

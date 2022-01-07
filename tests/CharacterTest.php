@@ -219,8 +219,7 @@ class CharacterTest extends TestCase {
 		//Given
 		$heman = new Character();
 		$skeletor = new Character();
-		$heman->setDamage(200);
-		$heman->setHealth(600);
+		$heman->setHeal(200);
 		$skeletor->setHealth(600);
 		$heman->joinFaction("Reds");
  		$skeletor->joinFaction("Reds"); 
@@ -229,6 +228,8 @@ class CharacterTest extends TestCase {
 		//Then
 		$this->assertEquals(800, $skeletor->getHealth());
 	}
+
+// TESTS DE LA 5ª ITERACIÓN
 
 	public function test_characters_can_damage_things()
 	{
@@ -283,7 +284,29 @@ class CharacterTest extends TestCase {
 		//Then
 		$this->assertEquals(0, $mesa->getHealth());
 		$this->assertEquals(true, $mesa->getDestroyed());
+		
+	}
 
+	public function test_things_can_have_more_1000_health(){
+		//Given
+		$heman = new Character();
+		$mesa = new Thing();
+		$heman->setDamage(500);
+		$mesa->setHealth(2000);
+		//When
+		$heman->deal_damage($mesa);
+		//Then
+		$this->assertEquals(1500, $mesa->getHealth());
+	}
+
+	public function test_things_not_belong_to_Factions(){
+		//Given
+		$mesa = new Thing();
+		//When
+		$mesa->joinFaction("Blues");
+		$mesa->joinFaction("Reds");
+		//Then
+		$this->assertEquals("", $mesa->getFaction());
 	}
 } 
 
